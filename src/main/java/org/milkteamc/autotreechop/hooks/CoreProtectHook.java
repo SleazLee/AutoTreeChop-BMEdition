@@ -34,4 +34,18 @@ public class CoreProtectHook {
             api.logRemoval(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
         }
     }
+
+    /**
+     * Determine if the specified block was placed by a player according to
+     * CoreProtect's records.
+     *
+     * @param block the block to check
+     * @return {@code true} if CoreProtect logged the block, otherwise {@code false}
+     */
+    public boolean isPlayerPlaced(Block block) {
+        if (api != null && api.isEnabled()) {
+            return api.isLogged(block);
+        }
+        return false;
+    }
 }
