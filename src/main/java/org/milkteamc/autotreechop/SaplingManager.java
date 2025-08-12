@@ -25,6 +25,8 @@ public class SaplingManager {
             Material.MUDDY_MANGROVE_ROOTS
     );
 
+    private static final int SEARCH_RADIUS = 5;
+
     public SaplingManager(AutoTreeChop plugin) {
         this.plugin = plugin;
         load();
@@ -57,8 +59,61 @@ public class SaplingManager {
             return;
         }
         Block below = brokenBlock.getRelative(0, -1, 0);
-        if (SaplingManager.SOIL_BLOCKS.contains(below.getType()) && brokenBlock.getType() == Material.AIR) {
-            brokenBlock.setType(sapling);
+        if (!SOIL_BLOCKS.contains(below.getType()) || brokenBlock.getType() != Material.AIR) {
+            return;
         }
+
+        if (isTwoByTwo(originalLog, sapling, brokenBlock)) {
+            brokenBlock.setType(sapling);
+            return;
+        }
+
+        if (hasNearbySapling(brokenBlock, sapling, SEARCH_RADIUS)) {
+            return;
+        }
+
+        brokenBlock.setType(sapling);
+    }
+
+    private boolean hasNearbySapling(Block origin, Material sapling, int radius) {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                Block check = origin.getRelative(dx, 0, dz);
+                if (check.getType() == sapling) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isTwoByTwo(Material log, Material sapling, Block center) {
+        int[][] anchors = {{0, 0}, {-1, 0}, {0, -1}, {-1, -1}};
+        for (int[] anchor : anchors) {
+            boolean matches = true;
+            for (int dx = 0; dx <= 1 && matches; dx++) {
+                for (int dz = 0; dz <= 1 && matches; dz++) {
+                    Block block = center.getRelative(anchor[0] + dx, 0, anchor[1] + dz);
+                    if (block.equals(center)) {
+                        if (!SOIL_BLOCKS.contains(block.getRelative(0, -1, 0).getType())) {
+                            matches = false;
+                        }
+                        continue;
+                    }
+                    Material type = block.getType();
+                    if (type != log && type != sapling) {
+                        matches = false;
+                        break;
+                    }
+                    if (!SOIL_BLOCKS.contains(block.getRelative(0, -1, 0).getType())) {
+                        matches = false;
+                    }
+                }
+            }
+            if (matches) {
+                return true;
+            }
+        }
+        return false;
     }
 }
