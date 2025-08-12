@@ -1,8 +1,5 @@
 package org.milkteamc.autotreechop;
 
-import com.jeff_media.updatechecker.UpdateCheckSource;
-import com.jeff_media.updatechecker.UpdateChecker;
-import com.jeff_media.updatechecker.UserAgentBuilder;
 import de.cubbossa.tinytranslations.*;
 import de.cubbossa.tinytranslations.libs.kyori.adventure.text.ComponentLike;
 import de.cubbossa.tinytranslations.storage.properties.PropertiesMessageStorage;
@@ -167,16 +164,6 @@ public class AutoTreeChop extends JavaPlugin implements Listener, CommandExecuto
         } else {
             getLogger().warning("PlaceholderAPI not found. Placeholder expansion for AutoTreeChop will not work.");
         }
-
-        new UpdateChecker(this, UpdateCheckSource.SPIGOT, SPIGOT_RESOURCE_ID)
-                .checkEveryXHours(24)
-                .setDonationLink("https://ko-fi.com/maoyue")
-                .setChangelogLink("https://modrinth.com/plugin/autotreechop/version/latest")
-                .setDownloadLink("https://modrinth.com/plugin/autotreechop/version/latest")
-                .setNotifyOpsOnJoin(true)
-                .setNotifyByPermissionOnJoin("autotreechop.updatechecker")
-                .setUserAgent(new UserAgentBuilder().addPluginNameAndVersion())
-                .checkNow();
 
         autoTreeChopAPI = new AutoTreeChopAPI(this);
         playerConfigs = new HashMap<>();
